@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SCT Unit-05</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f9f9f9;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        header {
+            background-color: #0077cc;
+            color: white;
+            padding: 1rem 0.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 1.2rem auto;
+            padding: 1rem;
+            background: white;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.06);
+        }
+
+        h2 {
+            color: #0077cc;
+            margin: 1.2rem 0 0.8rem;
+            font-size: 1.25rem;
+        }
+
+        ul {
+            margin: 0.4rem 0 0.7rem 0.7rem;
+            padding-left: 0.7rem;
+        }
+
+        ul ul {
+            margin-left: 0.7rem;
+            padding-left: 0.7rem;
+        }
+
+        li>ul {
+            margin-top: 0.2rem;
+            margin-bottom: 0.3rem;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        .code-label {
+            background: #e0e0e0;
+            padding: 4px 10px;
+            display: inline-block;
+            font-weight: bold;
+            color: #000;
+            border-radius: 6px 6px 0 0;
+            margin-left: 1rem;
+            font-size: 0.95rem;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 0 6px 6px 6px;
+            overflow-x: auto;
+            margin: -6px 0 0.6rem 1rem;
+            font-size: 0.95rem;
+            border: 1px solid #ddd;
+            white-space: pre-wrap;
+        }
+
+        .output {
+            margin: 0 0 0 1.2rem;
+            padding: 0.45rem 0.8rem;
+            font-size: 1rem;
+            background: #f8f8fa;
+            border-radius: 4px;
+            border-left: 3px solid #50aaff;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.7rem;
+            }
+
+            h2 {
+                font-size: 1.13rem;
+                margin-top: 1rem;
+            }
+
+            .code-label,
+            pre {
+                margin-left: 0.5rem;
+                font-size: 0.87rem;
+            }
+
+            .output {
+                margin-left: 0.6rem;
+                font-size: 0.96rem;
+                padding: 0.36rem 0.6rem;
+            }
+
+            th,
+            td {
+                padding: 0.6rem;
+            }
+
+            /* Ensure the responsive wrapper works well on narrow viewports */
+            .table-responsive table {
+                min-width: 520px;
+            }
+
+            .table-responsive {
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media print {
+            .container {
+                page-break-after: always;
+            }
+
+        }
+
+        @media (max-width: 480px) {
+
+            ul,
+            ul ul {
+                margin-left: 0.46rem !important;
+                padding-left: 0.5rem !important;
+            }
+        }
+
+        img {
+            display: block;
+            max-width: 58%;
+            height: auto;
+            max-height: 270px;
+            object-fit: contain;
+            margin: 1rem auto;
+            border-radius: 6px;
+            cursor: zoom-in;
+            transition: transform 0.2s ease;
+            border: 1px solid #ddd;
+        }
+
+        img:hover {
+            transform: scale(1.04);
+        }
+
+        #lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            backdrop-filter: blur(6px);
+        }
+
+        #lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #lightbox img {
+            max-width: 88%;
+            max-height: 88%;
+            border-radius: 10px;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+            transform: scale(0.85);
+            transition: transform 0.3s ease;
+            cursor: zoom-out;
+        }
+
+        #lightbox.active img {
+            transform: scale(1);
+        }
+
+        #image-tip {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 119, 204, 0.96);
+            color: #fff;
+            padding: 0.7rem 1.1rem;
+            border-radius: 6px;
+            font-size: 0.92rem;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease;
+            white-space: nowrap;
+        }
+
+        #image-tip.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 480px) {
+            #image-tip {
+                font-size: 0.85rem;
+                padding: 0.6rem 1rem;
+            }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            background: transparent;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 0.8rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #0077cc;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #e6f0ff;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+        }
+
+        .table-responsive table {
+            min-width: 640px;
+        }
+    </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WJ8GK8VNS9"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-WJ8GK8VNS9');
+    </script>
+</head>
+
+<body>
+    <header><strong>SCT Unit-05</strong></header>
+    <div class="container">
+        <h2><strong>1)Functions in Python</strong></h2>
+        <ul class="i">
+            <li>A function is a block of code used to perform a specific task</li>
+            <li>It is defined with the "def" keyword</li>
+            <li><strong>Syntax:</strong>
+                <pre>def fun():
+    ...
+</pre>
+            </li>
+            <li><strong>Types of Functions:</strong>
+                <ul>
+                    <li><strong>a)Built-in Functions:</strong>
+                        <ul>
+                            <li>These are the pre-defined functions provided by Python</li>
+                            <li>Example:
+                                <ul>
+                                    <li>print()</li>
+                                    <li>len()</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><strong>b)User-defined Functions:</strong>
+                        <ul>
+                            <li>These are the functions created by the programmer</li>
+                            <li>They are defined with the "def" keyword</li>
+                            <li><strong>Syntax:</strong>
+                                <pre>def fun():
+    ...
+</pre>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><strong>c)Lambda function:</strong>
+                        <ul>
+                            <li>Function without a name</li>
+                            <li>They are defined with the "lambda" keyword</li>
+                            <li><strong>Syntax:</strong>
+                                <pre>a = lambda b: b*b</pre>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><strong>d)Recursive Function:</strong>
+                        <ul>
+                            <li>A Function that calls itself is called as a Recursive Function</li>
+                            <li><strong>Syntax:</strong>
+                                <pre>def fun(n):
+    fun(n-1)
+    ...
+</pre>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><strong>e)Methods:</strong>
+                        <ul>
+                            <li>Function defined inside the class is called as Methods</li>
+                            <li><strong>Syntax:</strong>
+                                <pre>class A:
+    def fun(self):
+        ...
+</pre>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <header><strong>SCT Unit-05</strong></header>
+    <div class="container">
+        <h2><strong>2)Steps to install a security external module in Python</strong></h2>
+        <ul class="i">
+            <li>Steps:
+                <ul>
+                    <li>i)Open the terminal</li>
+                    <li>ii)Install the module
+                        <ul>
+                            <li>pip install cryptography</li>
+                        </ul>
+                    </li>
+                    <li>iii)Upgrade the module
+                        <ul>
+                            <li>pip install --upgrade cryptography</li>
+                        </ul>
+                    </li>
+                    <li>iv)Run the program</li>
+                </ul>
+            </li>
+            <li><strong>Example:</strong></li>
+            <li><strong>i)pip install cryptography</strong></li>
+            <div class="code-label">Program</div>
+            <pre>from cryptography.fernet import Fernet
+
+a = Fernet.generate_key()
+b = Fernet(a)
+
+encrypt = b.encrypt(b"SCT")
+decrypt = b.decrypt(encrypt)
+
+print(encrypt)
+print(decrypt)
+
+# output:
+# b"..."
+# b"SCT"
+</pre>
+            <li><strong>ii)pip install requests</strong></li>
+            <div class="code-label">Program</div>
+            <pre>import requests
+
+a = requests.get("https://www.google.com")
+print(a.text)
+
+# Output:
+# HTML Code
+</pre>
+            <li><strong>iii)pip install numpy</strong></li>
+            <div class="code-label">Program</div>
+            <pre>import numpy as np
+
+a = [1,2,3,4,5]
+print(np.array(a))
+
+# Output:
+# [1 2 3 4 5]
+</pre>
+            <li><strong>iv)pip install pandas</strong></li>
+            <div class="code-label">Program</div>
+            <pre>import pandas as pd
+
+a = [1,2,3,4,5]
+print(pd.array(a))
+
+# output:
+# [1,2,3,4,5]
+</pre>
+        </ul>
+    </div>
+
+    <header><strong>SCT Unit-05</strong></header>
+    <div class="container">
+        <h2><strong>3)File Handling</strong></h2>
+        <ul class="i">
+            <li>File Handling allows Python programs to create, read, write and manage files</li>
+            <li><strong>i)Open():</strong>
+                <ul>
+                    <li>file = open("A.txt", "r")</li>
+                </ul>
+            </li>
+            <li><strong>ii)close():</strong>
+                <ul>
+                    <li>file.close()</li>
+                </ul>
+            </li>
+            <li><strong>iii)read():</strong>
+                <ul>
+                    <li>file.read()</li>
+                </ul>
+            </li>
+            <li><strong>iv)write():</strong>
+                <ul>
+                    <li>file = open("A.txt", "w")</li>
+                    <li>file.write("SCT")</li>
+                </ul>
+            </li>
+            <li><strong>v)Exception Handling:</strong>
+                <pre>try:
+    file = open("A.txt", "r")
+    print("SCT")
+except Exception as e:
+    print(e)
+</pre>
+            </li>
+        </ul>
+    </div>
+
+    <header><strong>SCT Unit-05</strong></header>
+    <div class="container">
+        <h2><strong>4)Web Requests</strong></h2>
+        <ul class="i">
+            <li>In Python, Web Requests are performed by using request methods</li>
+            <li><strong>Types of Web Requests:</strong></li>
+            <li><strong>i)GET Requests:</strong>
+                <ul>
+                    <li>Retrieves data from a server</li>
+                    <li>Fetching data</li>
+                    <li>Data is sent in the URL</li>
+                    <li>Less secure</li>
+                    <li>Do not change the data</li>
+                    <li><strong>syntax:</strong>
+                        <pre>requests.get("URL")</pre>
+                    </li>
+                    <li><strong>Program</strong></li>
+                    <div class="code-label">Program</div>
+                    <pre>import requests
+print(requests.get("https://www.google.com").json())
+
+# output:
+# {'obj1':1, 'obj2':2, 'obj':3, ....}
+</pre>
+                </ul>
+            </li>
+            <li><strong>ii)POST Requests:</strong>
+                <ul>
+                    <li>Send data to a server</li>
+                    <li>Sending data</li>
+                    <li>Data is sent in the request body</li>
+                    <li>More secure</li>
+                    <li>It changes the data</li>
+                    <li><strong>syntax:</strong>
+                        <pre>requests.post("URL")</pre>
+                    </li>
+                    <li><strong>Program</strong></li>
+                    <div class="code-label">Program</div>
+                    <pre>import requests
+print(requests.post("https://www.google.com").json())
+
+# output:
+# {'obj1':1, 'obj2':2, 'obj':3, ....}
+</pre>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <header><strong>SCT Unit-05</strong></header>
+    <div class="container">
+        <h2><strong>5)Input validation in Python</strong></h2>
+        <ul class="i">
+            <li><strong>i)check the input:</strong>
+                <pre>a = input()
+if a.isalpha():
+    print("Valid")
+else:
+    print("Invalid")
+</pre>
+            </li>
+            <li><strong>ii)check the length of the input:</strong>
+                <pre>a = input()
+if 5 < len(a) < 10:
+    print("Valid")
+else:
+    print("Invalid")
+</pre>
+            </li>
+            <li><strong>iii)Sanitize the input:</strong>
+                <pre>a = input()
+print(a.replace("<", "").replace(">", ""))
+</pre>
+            </li>
+            <li><strong>iv)Don't use eval() or exec():</strong>
+                <pre># avoid
+eval(input())
+exec(input())
+</pre>
+            </li>
+        </ul>
+    </div>
+
+  <header><strong>SCT Unit-05</strong></header>
+<div class="container">
+    <h2><strong>6)Secure File Operations</strong></h2>
+    <ul class="i">
+        <li><strong>i)Exception Handling</strong>
+            <pre>try:
+    file = open("A.txt", "r")
+    print("SCT")
+except Exception as e:
+    print(e)
+</pre>
+        </li>
+
+        <li><strong>ii)Use "with"</strong>
+            <pre>with open("A.txt", "r") as f:
+    data = f.read()
+</pre>
+        </li>
+
+        <li><strong>iii)Validate the file</strong>
+            <pre>import os
+os.path.isfile("A.txt")
+</pre>
+        </li>
+    </ul>
+</div>
+
+<header><strong>SCT Unit-05</strong></header>
+<div class="container">
+    <h2><strong>7)Looping Statements</strong></h2>
+    <ul class="i">
+        <li>Python mainly provides two looping statements:
+            <ul>
+                <li>a)for loop</li>
+                <li>b)while loop</li>
+            </ul>
+        </li>
+
+        <li><strong>a)for loop:</strong>
+            <ul>
+                <li>It executes a block of code in sequence</li>
+                <li><strong>syntax:</strong>
+                    <pre>for i in range(n):
+    ...
+</pre>
+                </li>
+            </ul>
+        </li>
+
+        <li><strong>b)while loop:</strong>
+            <ul>
+                <li>It executes a block of code until the condition is false</li>
+                <li><strong>syntax:</strong>
+                    <pre>while(condition):
+    ...
+    # update condition
+</pre>
+                </li>
+            </ul>
+        </li>
+
+        <li><strong>Program:</strong></li>
+        <div class="code-label">Program</div>
+        <pre>password = "shyam"
+count = 0
+
+while(count < 5):
+    enter = input()
+    if enter == "shyam":
+        print("Success")
+        break
+    else:
+        print("try again")
+
+    count += 1
+</pre>
+    </ul>
+</div>
+
+
+    <div id="lightbox">
+        <img id="lightbox-img" src="" alt="Enlarged view">
+    </div>
+
+    <div id="image-tip">Click image to enlarge</div>
+
+    <script>
+        const lightbox = document.getElementById("lightbox");
+        const lightboxImg = document.getElementById("lightbox-img");
+
+        document.querySelectorAll("img").forEach(img => {
+            img.addEventListener("click", () => {
+                lightboxImg.src = img.src;
+                lightbox.classList.add("active");
+            });
+        });
+
+        lightbox.addEventListener("click", () => {
+            lightbox.classList.remove("active");
+        });
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const tip = document.getElementById("image-tip");
+            if (tip) {
+                tip.classList.add("show");
+                setTimeout(() => tip.classList.remove("show"), 5000);
+            }
+        });
+    </script>
+
+</body>
+
+</html>
